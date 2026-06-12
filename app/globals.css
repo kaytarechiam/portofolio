@@ -1,27 +1,184 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Class-based dark (site is dark-only; .dark lives on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------ */
+/*  Theme bridge — maps semantic utilities to the design-system vars   */
+/*  See DESIGN_SYSTEM.md. Colors in OKLCH; v4 handles /opacity via      */
+/*  color-mix, so full oklch() values are fine.                        */
+/* ------------------------------------------------------------------ */
+@theme inline {
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-fraunces), Georgia, serif;
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-pixel: var(--font-pixelify), var(--font-jetbrains), monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* brand-specific roles */
+  --color-signal: var(--signal);
+  --color-pop: var(--pop);
+  --color-border-strong: var(--border-strong);
+  --color-sunken: var(--bg-sunken);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 8px);
+  --radius-xl: calc(var(--radius) + 16px);
+  --radius-4xl: 2rem;
+
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Emil Kowalski's stronger curves */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-io: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.875rem;
+
+  /* surfaces — warm espresso ink, hue ~70 */
+  --background: oklch(0.175 0.012 70);
+  --foreground: oklch(0.94 0.018 80);
+  --card: oklch(0.235 0.014 70);
+  --card-foreground: oklch(0.94 0.018 80);
+  --popover: oklch(0.265 0.016 70);
+  --popover-foreground: oklch(0.94 0.018 80);
+  --secondary: oklch(0.265 0.016 70);
+  --secondary-foreground: oklch(0.94 0.018 80);
+  --muted: oklch(0.235 0.014 70);
+  --muted-foreground: oklch(0.7 0.022 75);
+  --accent: oklch(0.265 0.016 70);
+  --accent-foreground: oklch(0.94 0.018 80);
+  --border: oklch(0.32 0.016 70);
+  --input: oklch(0.33 0.016 70);
+
+  /* warm accents — amber signature, terracotta + gold support */
+  --primary: oklch(0.76 0.132 70); /* amber / ochre */
+  --primary-foreground: oklch(0.18 0.012 70);
+  --ring: oklch(0.76 0.132 70); /* amber focus */
+  --signal: oklch(0.62 0.13 45); /* terracotta */
+  --pop: oklch(0.83 0.105 78); /* soft gold */
+  --border-strong: oklch(0.45 0.02 70);
+  --bg-sunken: oklch(0.145 0.01 70);
+
+  --destructive: oklch(0.6 0.19 30);
+  --destructive-foreground: oklch(0.96 0.01 30);
+}
+
+/* dark-only: keep .dark identical so dark: utilities resolve correctly */
+.dark {
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 35%, transparent);
+    color: var(--foreground);
+  }
+  /* Tinted scrollbar */
+  * {
+    scrollbar-color: var(--border-strong) transparent;
+    scrollbar-width: thin;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* mono eyebrow label, e.g. "01 // about" */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  .container-x {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 3rem);
+  }
+  .section-pad {
+    padding-block: clamp(96px, 12vw, 160px);
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  /* faint dotted grid used as section texture */
+  .bg-grid {
+    background-image: radial-gradient(
+      color-mix(in oklab, var(--border) 70%, transparent) 1px,
+      transparent 1px
+    );
+    background-size: 28px 28px;
+  }
+  /* film grain for premium texture */
+  .grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+}
+
+/* Custom cursor: hide native cursor only on fine pointers w/ motion ok */
+@media (pointer: fine) {
+  body.has-custom-cursor,
+  body.has-custom-cursor * {
+    cursor: none;
+  }
+}
+
+/* Reduced-motion: kill non-essential animation globally (JS also guards) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  body.has-custom-cursor,
+  body.has-custom-cursor * {
+    cursor: auto;
   }
 }

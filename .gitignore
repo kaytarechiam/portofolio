@@ -34,3 +34,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude code local config (session files, skills cache)
+.claude/
+.agents/
+skills-lock.json
+
+# design system notes (internal, not needed on GitHub)
+DESIGN_SYSTEM.md
