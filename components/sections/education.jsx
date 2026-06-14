@@ -25,9 +25,11 @@ export default function Education() {
               <h3 className="mt-4 text-xl font-semibold text-foreground">{e.school}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{e.place}</p>
               <p className="mt-3 text-pretty text-secondary-foreground">{e.degree}</p>
-              <p className="mt-2 inline-block rounded-full border border-pop/30 bg-pop/10 px-3 py-1 font-mono text-xs text-pop">
-                {e.gpa}
-              </p>
+              {e.gpa && (
+                <p className="mt-2 inline-block rounded-full border border-pop/30 bg-pop/10 px-3 py-1 font-mono text-xs text-pop">
+                  {e.gpa}
+                </p>
+              )}
               <ul className="mt-4 space-y-2">
                 {e.points.map((p) => (
                   <li

@@ -26,7 +26,7 @@ export default function About() {
               className="max-w-[60ch] text-pretty text-lg leading-relaxed text-secondary-foreground"
             />
 
-            <div className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-4">
+            <div className="mt-10 grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-border bg-border">
               {stats.map((s, i) => (
                 <Reveal
                   key={s.label}
