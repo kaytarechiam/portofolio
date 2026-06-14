@@ -2,8 +2,7 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 /**
  * Lenis smooth scroll wired into the GSAP ticker so ScrollTrigger stays in
@@ -12,8 +11,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
  */
 export default function SmoothScroll({ children }) {
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
       ScrollTrigger.refresh();

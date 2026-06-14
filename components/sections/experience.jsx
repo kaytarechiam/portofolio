@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import Reveal from "@/components/ui/reveal";
 import SectionHeading from "@/components/ui/section-heading";
 import { experience } from "@/lib/data";
@@ -18,7 +17,6 @@ export default function Experience() {
       if (fill) fill.style.transform = "scaleY(1)";
       return;
     }
-    gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
       gsap.fromTo(
         fill,

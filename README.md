@@ -4,7 +4,7 @@ Personal portfolio for **Kayta Rechia Mazaya** — Information Systems & Technol
 student at ITB. A single-page, dark, editorial site with an interactive 3D hero,
 scroll-driven animation, and a custom design system ("Warm Editorial Noir").
 
-**Live:** https://kaytarechiam.vercel.app
+**Live:** https://kaytarechiamporto.vercel.app
 **GitHub:** https://github.com/kaytarechiam
 
 ---

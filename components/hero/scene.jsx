@@ -4,6 +4,10 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, MeshDistortMaterial, Icosahedron, Torus, Box, Octahedron } from "@react-three/drei";
 import { Suspense, useRef } from "react";
 
+const reduceMotion =
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 // Hex approximations of the OKLCH design tokens (three.js doesn't parse oklch).
 const AMBER = "#E8A24C";
 const TERRACOTTA = "#C96F4A";
@@ -12,16 +16,16 @@ const GOLD = "#EFC07A";
 function CoreBlob() {
   const ref = useRef();
   useFrame((state) => {
-    if (!ref.current) return;
+    if (reduceMotion || !ref.current) return;
     ref.current.rotation.y = state.clock.elapsedTime * 0.18;
     ref.current.rotation.z = state.clock.elapsedTime * 0.06;
   });
   return (
-    <Float speed={1.3} rotationIntensity={0.6} floatIntensity={1.1}>
+    <Float speed={reduceMotion ? 0 : 1.3} rotationIntensity={0.6} floatIntensity={1.1}>
       <Icosahedron ref={ref} args={[1.45, 8]}>
         <MeshDistortMaterial
           color={AMBER}
-          distort={0.34}
+          distort={reduceMotion ? 0 : 0.34}
           speed={1.7}
           roughness={0.28}
           metalness={0.18}
@@ -63,7 +67,7 @@ function Accents() {
 function ParallaxRig({ children }) {
   const group = useRef();
   useFrame((state) => {
-    if (!group.current) return;
+    if (reduceMotion || !group.current) return;
     const { x, y } = state.pointer;
     group.current.rotation.y += (x * 0.35 - group.current.rotation.y) * 0.05;
     group.current.rotation.x += (-y * 0.25 - group.current.rotation.x) * 0.05;

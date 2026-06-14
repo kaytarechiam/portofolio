@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import Reveal from "@/components/ui/reveal";
 import SectionHeading from "@/components/ui/section-heading";
 import { skillGroups, techBadges, languages } from "@/lib/data";
@@ -25,29 +24,30 @@ export default function Skills() {
       return;
     }
 
-    gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
-      rows.forEach((row) => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ref.current,
+          start: "top 75%",
+          end: "bottom 45%",
+          scrub: true,
+          onUpdate() {
+            rows.forEach((row) => {
+              const fill = row.querySelector("[data-fill]");
+              const num = row.querySelector("[data-num]");
+              if (fill && num) {
+                const level = +row.dataset.level;
+                const cur = Number(gsap.getProperty(fill, "scaleX"));
+                num.textContent = `${Math.round(cur * 100)}%`;
+              }
+            });
+          },
+        },
+      });
+      rows.forEach((row, i) => {
         const level = +row.dataset.level;
         const fill = row.querySelector("[data-fill]");
-        const num = row.querySelector("[data-num]");
-        gsap.fromTo(
-          fill,
-          { scaleX: 0 },
-          {
-            scaleX: level / 100,
-            ease: "none",
-            scrollTrigger: {
-              trigger: row,
-              start: "top 88%",
-              end: "top 42%",
-              scrub: true,
-              onUpdate: (self) => {
-                if (num) num.textContent = `${Math.round(self.progress * level)}%`;
-              },
-            },
-          }
-        );
+        tl.fromTo(fill, { scaleX: 0 }, { scaleX: level / 100, ease: "none", duration: 1 }, i * 0.4);
       });
     }, ref);
     return () => ctx.revert();
