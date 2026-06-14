@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 /**
  * Scroll-driven parallax (scrubbed). `speed` ~ how far it drifts: positive
@@ -13,7 +12,6 @@ export default function Parallax({ children, speed = 0.3, className = "" }) {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    gsap.registerPlugin(ScrollTrigger);
     const el = ref.current;
     const travel = speed * 60;
     const tween = gsap.fromTo(

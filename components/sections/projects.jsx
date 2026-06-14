@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap } from "@/lib/gsap";
 import { ArrowUpRight, Sprout, Trophy } from "lucide-react";
 import {
   Dialog,
@@ -16,7 +15,6 @@ import SectionHeading from "@/components/ui/section-heading";
 import SmartImage from "@/components/ui/smart-image";
 import { projects } from "@/lib/data";
 
-// Bento spans (lg, 6-col grid). Current projects get larger cells.
 const SPAN = {
   dash: "lg:col-span-4",
   questify: "lg:col-span-2",
@@ -30,32 +28,6 @@ const SPAN = {
 
 function ProjectCard({ p, onOpen, index }) {
   const featured = p.current;
-  const mediaRef = useRef(null);
-
-  // In-card image parallax: media drifts slightly as the card scrolls past.
-  useEffect(() => {
-    const el = mediaRef.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        el,
-        { yPercent: -8 },
-        {
-          yPercent: 8,
-          ease: "none",
-          scrollTrigger: {
-            trigger: el,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
-        }
-      );
-    });
-    return () => ctx.revert();
-  }, []);
 
   return (
     <Reveal
@@ -74,7 +46,7 @@ function ProjectCard({ p, onOpen, index }) {
             featured ? "h-52 sm:h-56" : "h-44 sm:h-48"
           } ${p.id === "agriculture" ? "sm:!h-40 lg:!h-44" : ""}`}
         >
-          <div ref={mediaRef} className="absolute inset-x-0 -inset-y-[12%] will-change-transform">
+          <div data-parallax-media className="absolute inset-x-0 -inset-y-[12%] will-change-transform">
             {p.image ? (
               <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">
                 <SmartImage
@@ -141,11 +113,37 @@ function ProjectCard({ p, onOpen, index }) {
 export default function Projects() {
   const [active, setActive] = useState(null);
   const [open, setOpen] = useState(false);
+  const gridRef = useRef(null);
 
   const onOpen = (p) => {
     setActive(p);
     setOpen(true);
   };
+
+  // Single parent context for all card parallax — 8 STs but one cleanup.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ctx = gsap.context(() => {
+      const mediaEls = gsap.utils.toArray("[data-parallax-media]", gridRef.current);
+      mediaEls.forEach((el) => {
+        gsap.fromTo(
+          el,
+          { yPercent: -8 },
+          {
+            yPercent: 8,
+            ease: "none",
+            scrollTrigger: {
+              trigger: el,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          }
+        );
+      });
+    }, gridRef);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section id="projects" className="section-pad relative">
@@ -156,7 +154,10 @@ export default function Projects() {
           title="Things I've designed, built, and shipped."
         />
 
-        <div className="mt-14 grid auto-rows-fr grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6">
+        <div
+          ref={gridRef}
+          className="mt-14 grid auto-rows-fr grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6"
+        >
           {projects.map((p, i) => (
             <ProjectCard key={p.id} p={p} onOpen={onOpen} index={i} />
           ))}
